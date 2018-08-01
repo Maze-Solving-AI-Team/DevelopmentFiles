@@ -1,8 +1,17 @@
 # Import modules
-import sys, pygame, time, math
+import sys, pygame, time, math, algs
 from time import sleep
 from PIL import Image
+from algs import *
 
+'''
+deadEnd=Algs()
+intersection=Algs()
+priorities=Algs()
+http://python4java.necaiseweb.org/OOP/DefiningClasses
+'''
+
+print("Main running")
 # Display background image
 image = 'start.png'
 change = 1
@@ -22,7 +31,7 @@ while running:
     if event.type == pygame.MOUSEBUTTONUP:
         if event.button == 1:
             x,y = pygame.mouse.get_pos()
-            if 147 <= x <= 441 and 440 <= y <= 526:
+            if 162 <= x <= 482 and 483 <= y <= 574:
                 running = False
 
 #Settings Page
@@ -67,6 +76,8 @@ while running:
                 maze = 'maze9.png' 
             if 528 <= x <= 621 and 239 <= y <= 333: #maze10
                 maze = 'maze10.png'
+print(sleep)
+print(maze)
 
 #Information Page
 background = pygame.image.load('information.png').convert()
@@ -82,13 +93,15 @@ while running:
             x,y = pygame.mouse.get_pos()
             if 190 <= x <= 469 and 516 <= y <= 628:
                 running = False
-
+x = algs.initialize()
+x.rightTurn()
+'''
 #Run mazes
 import rightturn
 import deadend
 import intersection
 import priorities
-
+'''
 #Results page
 background = pygame.image.load('results.png').convert()
 newscreen = pygame.transform.scale(background, (width, height))

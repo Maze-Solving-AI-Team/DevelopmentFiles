@@ -178,6 +178,7 @@ deadEnds = 1
 
 #-------------DEAD END FILLER------------
 while deadEnds != 0:
+    pygame.event.get()
     #Define variables
     deadEnds = 0
     intersection = 0

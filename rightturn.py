@@ -1,4 +1,4 @@
-# Import modules
+'''
 import sys, pygame, time, math
 from time import sleep
 from pygame.locals import *
@@ -6,6 +6,7 @@ from PIL import Image
 import timing
 from main import sleep
 from main import maze
+'''
 
 # Initialize
 img = Image.open(maze)
@@ -191,6 +192,7 @@ moveUp(currentX, currentY, blockSize, white, sleep)
 
 #original
 while 0 != currentY:
+    pygame.event.get()
     if direction == 1:#up
         up(white)
     elif direction == 2:

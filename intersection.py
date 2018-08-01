@@ -15,7 +15,6 @@ height = img.height * change
 screen = pygame.display.set_mode((width,height))
 background = pygame.image.load(maze).convert()
 newscreen = pygame.transform.scale(background, (width, height))
-
 sleepTime = sleep
 #number of turns
 upCount = 0
@@ -524,6 +523,7 @@ def intersection(isInt,firstTime):
 # ------------- OUR ALGORITHM -------------
 
 while 0 != currentY:
+    pygame.event.get()
 #for x in range(0,10):
     getCur = newscreen.get_at((currentX, currentY))
     isInt=isIntersection()

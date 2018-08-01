@@ -17,7 +17,6 @@ background = [img]
 screen = pygame.display.set_mode((width,height))
 background = pygame.image.load(maze).convert()
 newscreen = pygame.transform.scale(background, (width, height))
-
 #Colors
 color = (0, 188, 0)
 white = (255, 255, 255)
@@ -104,6 +103,7 @@ def moveRight(x, y, blocksize, newcolor, sleep):
 moveUp(xvalueOfStart, yvalueOfStart, blockSize, white, sleep)
 
 while 0 != currentY:
+    pygame.event.get()
     if newscreen.get_at((currentX,currentY - blockSize)) == (255, 255, 255, 255):#up        
         moveUp(currentX, currentY, blockSize, blue, sleep)
     elif newscreen.get_at((currentX + blockSize,currentY)) == (255, 255, 255, 255):#right
