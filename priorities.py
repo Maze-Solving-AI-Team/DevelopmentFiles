@@ -5,7 +5,8 @@ from pygame.locals import *
 from PIL import *
 from PIL import Image
 import timing
-from init import *
+from main import sleep
+from main import maze
 
 # Initialize
 img = Image.open(maze)
