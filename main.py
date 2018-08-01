@@ -4,7 +4,7 @@ from time import sleep
 from PIL import Image
 
 # Display background image
-image = 'background.png'
+image = 'start.png'
 change = 1
 img = Image.open(image)
 width = img.width * change
@@ -24,16 +24,14 @@ while running:
             x,y = pygame.mouse.get_pos()
             if 147 <= x <= 441 and 440 <= y <= 526:
                 running = False
-time.sleep(5)
 
-background = pygame.image.load('page2.png').convert()
+#Settings Page
+background = pygame.image.load('settings.png').convert()
 newscreen = pygame.transform.scale(background, (width, height))
 screen.blit(newscreen, (0,0))
 pygame.display.update()
 
-#Settings Page
-
-sleep = 0.5
+sleep = 0.02
 maze = 'maze.png'
 running = True
 while running:
@@ -44,11 +42,11 @@ while running:
             if 190 <= x <= 470 and 514 <= y <= 628: #Next
                 running = False
             if 28 <= x <= 210 and 435 <= y <= 478: #0.5x
-                sleep = 0.25
+                sleep = 0.03
             if 234 <= x <= 415 and 435 <= y <= 478: #1.0x
-                sleep = 0.5
+                sleep = 0.02
             if 441 <= x <= 622 and 435 <= y <= 478: #1.5x
-                sleep = 0.75
+                sleep = 0.01
             if 29 <= x <= 124 and 113 <= y <= 207: #maze1
                 maze = 'maze.png'
             if 156 <= x <= 250 and 113 <= y <= 207: #maze2
@@ -69,5 +67,32 @@ while running:
                 maze = 'maze9.png' 
             if 528 <= x <= 621 and 239 <= y <= 333: #maze10
                 maze = 'maze10.png'
-            
-            running = False
+
+#Information Page
+background = pygame.image.load('information.png').convert()
+newscreen = pygame.transform.scale(background, (width, height))
+screen.blit(newscreen, (0,0))
+pygame.display.update()
+
+running = True
+while running:
+    event = pygame.event.wait()
+    if event.type == pygame.MOUSEBUTTONUP:
+        if event.button == 1:
+            x,y = pygame.mouse.get_pos()
+            if 190 <= x <= 469 and 516 <= y <= 628:
+                running = False
+
+#Run mazes
+import rightturn
+import deadend
+import intersection
+import priorities
+
+#Results page
+background = pygame.image.load('results.png').convert()
+newscreen = pygame.transform.scale(background, (width, height))
+screen.blit(newscreen, (0,0))
+pygame.display.update()
+
+time.sleep(5)
