@@ -1,14 +1,12 @@
-'''
-import sys, pygame, time, math
+# Import modules
+import sys, pygame, time, math, PIL
 from time import sleep
 from pygame.locals import *
+from PIL import *
 from PIL import Image
-import timing
-from main import sleep
-from main import maze
-'''
 
 # Initialize
+maze = 'maze.png'
 img = Image.open(maze)
 change = 3
 width = img.width * change
@@ -16,17 +14,16 @@ height = img.height * change
 screen = pygame.display.set_mode((width,height))
 background = pygame.image.load(maze).convert()
 newscreen = pygame.transform.scale(background, (width, height))
+sleep = 0
 
 #Colors
 color = (0, 188, 0)
 white = (255, 255, 255)
+black = (255, 255, 255, 255)
 blue = (0, 0, 255)
 red = (255, 0, 0)
 green = (0, 188, 0)
 
-# Recognizing black/white
-size = [img.size]
-colors = img.getcolors()
 pix = img.load()
 list = []
 
@@ -36,10 +33,7 @@ for x in range(0,180):
         list.append(x)
 
 xvalueOfStart = list[0] * change
-#print(xvalueOfStart)
-
 blockSize = len(list) * change
-
 yvalueOfStart = height - blockSize
 
 list = []
@@ -50,16 +44,14 @@ for x in range(0,180):
         list.append(x)
 
 xvalueOfEnd = list[0] * change
-#print(xvalueOfEnd)
 
 pygame.draw.rect(newscreen, color, pygame.Rect(xvalueOfStart, yvalueOfStart, blockSize, blockSize))
-screen.blit(newscreen, (0,0))
+screen.blit(newscreen, (0, 0))
 pygame.display.update()
-time.sleep(0.1)
 
 # Function to move forward
+# Function to move forward
 def moveUp(x, y, blocksize, newcolor, sleep):
-    global direction
     pygame.draw.rect(newscreen, newcolor, pygame.Rect(x, y, blocksize, blocksize))
     pygame.draw.rect(newscreen, color, pygame.Rect(x, y - blocksize, blocksize, blocksize))
     screen.blit(newscreen, (0,0))
@@ -68,12 +60,10 @@ def moveUp(x, y, blocksize, newcolor, sleep):
     global currentX
     currentY = y - blocksize
     currentX = x
-    direction = 1
     time.sleep(sleep)
 
 # Function to move left
 def moveDown(x, y, blocksize, newcolor, sleep):
-    global direction
     pygame.draw.rect(newscreen, newcolor, pygame.Rect(x, y, blocksize, blocksize))
     pygame.draw.rect(newscreen, color, pygame.Rect(x, y + blocksize, blocksize, blocksize))
     screen.blit(newscreen, (0,0))
@@ -82,12 +72,10 @@ def moveDown(x, y, blocksize, newcolor, sleep):
     global currentX    
     currentY = y + blocksize
     currentX = x
-    direction = 4
     time.sleep(sleep)
     
 # Function to move left  
 def moveLeft(x, y, blocksize, newcolor, sleep):
-    global direction
     pygame.draw.rect(newscreen, newcolor, pygame.Rect(x, y, blocksize, blocksize))
     pygame.draw.rect(newscreen, color, pygame.Rect(x - blocksize, y, blocksize, blocksize))
     screen.blit(newscreen, (0,0))
@@ -96,12 +84,10 @@ def moveLeft(x, y, blocksize, newcolor, sleep):
     global currentY        
     currentX = x - blocksize
     currentY = y
-    direction = 3
     time.sleep(sleep)
 
 # Function to move right
 def moveRight(x, y, blocksize, newcolor, sleep):
-    global direction
     pygame.draw.rect(newscreen, newcolor, pygame.Rect(x, y, blocksize, blocksize))
     pygame.draw.rect(newscreen, color, pygame.Rect(x + blocksize, y, blocksize, blocksize))
     screen.blit(newscreen, (0,0))
@@ -110,7 +96,6 @@ def moveRight(x, y, blocksize, newcolor, sleep):
     global currentY        
     currentX = x + blocksize
     currentY = y
-    direction = 2
     time.sleep(sleep)
 
 #Initialization of currentX and currentY
@@ -137,6 +122,19 @@ def up(replace):
     elif newscreen.get_at((currentX, currentY + blockSize)) == white:#down
         moveDown(currentX, currentY, blockSize, replace, sleep)
         direction = 4
+    else:
+        if newscreen.get_at((currentX - blockSize, currentY)) == blue:#left
+            moveLeft(currentX, currentY, blockSize, (0,255,255), sleep)
+            direction = 3
+        elif newscreen.get_at((currentX, currentY + blockSize)) == blue:#down
+            moveDown(currentX, currentY, blockSize, (0,255,255), sleep)
+            direction = 4
+        elif newscreen.get_at((currentX + blockSize, currentY)) == blue:#right
+            moveRight(currentX, currentY, blockSize, (0,255,255), sleep)
+            direction = 2
+        elif newscreen.get_at((currentX, currentY - blockSize)) == blue:#up        
+            moveUp(currentX, currentY, blockSize, (0,255,255), sleep)
+            direction = 1
     
 #Algorithm to determine direction to move if facing right
 def right(replace):
@@ -153,7 +151,20 @@ def right(replace):
     elif newscreen.get_at((currentX - blockSize, currentY)) == white:#left
         moveLeft(currentX, currentY, blockSize, replace, sleep)
         direction = 3
-    
+    else:
+        if newscreen.get_at((currentX, currentY - blockSize)) == blue:#up        
+            moveUp(currentX, currentY, blockSize, (0,255,255), sleep)
+            direction = 1
+        elif newscreen.get_at((currentX - blockSize, currentY)) == blue:#left
+            moveLeft(currentX, currentY, blockSize, (0,255,255), sleep)
+            direction = 3
+        elif newscreen.get_at((currentX, currentY + blockSize)) == blue:#down
+            moveDown(currentX, currentY, blockSize, (0,255,255), sleep)
+            direction = 4
+        elif newscreen.get_at((currentX + blockSize, currentY)) == blue:#right
+            moveRight(currentX, currentY, blockSize, (0,255,255), sleep)
+            direction = 2
+
 #Algorithm to determine direction to move if facing left
 def left(replace):
     global direction
@@ -169,6 +180,19 @@ def left(replace):
     elif newscreen.get_at((currentX + blockSize, currentY)) == white:#right
         moveRight(currentX, currentY, blockSize, replace, sleep)
         direction = 2
+    else:
+        if newscreen.get_at((currentX, currentY + blockSize)) == blue:#down
+            moveDown(currentX, currentY, blockSize, (0,255,255), sleep)
+            direction = 4
+        elif newscreen.get_at((currentX + blockSize, currentY)) == blue:#right
+            moveRight(currentX, currentY, blockSize, (0,255,255), sleep)
+            direction = 2
+        elif newscreen.get_at((currentX, currentY - blockSize)) == blue:#up        
+            moveUp(currentX, currentY, blockSize, (0,255,255), sleep)
+            direction = 1
+        elif newscreen.get_at((currentX - blockSize, currentY)) == blue:#left
+            moveLeft(currentX, currentY, blockSize, (0,255,255), sleep)
+            direction = 3
 
 #Algorithm to determine direction to move if facing down
 def down(replace):
@@ -185,20 +209,64 @@ def down(replace):
     elif newscreen.get_at((currentX, currentY - blockSize)) == white:#up        
         moveUp(currentX, currentY, blockSize, replace, sleep)
         direction = 1
+    else:
+        if newscreen.get_at((currentX + blockSize, currentY)) == blue:#right
+            moveRight(currentX, currentY, blockSize, (0,255,255), sleep)
+            direction = 2
+        elif newscreen.get_at((currentX, currentY - blockSize)) == blue:#up        
+            moveUp(currentX, currentY, blockSize, (0,255,255), sleep)
+            direction = 1
+        elif newscreen.get_at((currentX - blockSize, currentY)) == blue:#left
+            moveLeft(currentX, currentY, blockSize, (0,255,255), sleep)
+            direction = 3
+        elif newscreen.get_at((currentX, currentY + blockSize)) == blue:#down
+            moveDown(currentX, currentY, blockSize, (0,255,255), sleep)
+            direction = 4
 
 varsInit(xvalueOfStart, yvalueOfStart)
 
-moveUp(currentX, currentY, blockSize, white, sleep)
+moveUp(currentX, currentY, blockSize, blue, sleep)
 
-#original
 while 0 != currentY:
     pygame.event.get()
     if direction == 1:#up
-        up(white)
+        up(blue)
     elif direction == 2:
-        right(white)
+        right(blue)
     elif direction == 3:
-        left(white)
+        left(blue)
     elif direction == 4:
-        down(white)
+        down(blue)
 
+direction = 1
+currentX = blockSize
+currentY = blockSize
+whiteListX = []
+whiteListY = []
+deadEnds = 1
+
+#-------------DEAD END FILLER------------
+while True:
+    pygame.event.get()
+    #Define variables
+    deadEnds = 0
+    intersection = 0
+    #Check the color of each and add location to list if white
+    while currentY <= (height - blockSize):
+        getCur = newscreen.get_at((currentX, currentY))
+        if getCur == (0,255,255):
+            whiteListX.append(currentX)
+            whiteListY.append(currentY)
+        currentX = currentX + blockSize
+        if currentX >= (width - blockSize + 1):
+            currentX = 0
+            currentY = currentY + blockSize
+    whiteListLength = len(whiteListX)
+    #Determine if each white space is a deadend
+    for x in range (0, whiteListLength):
+        pygame.draw.rect(newscreen, white, pygame.Rect(whiteListX[x], whiteListY[x], blockSize, blockSize))
+    screen.blit(newscreen, (0,0))
+    pygame.display.update()
+    break
+
+time.sleep(5)

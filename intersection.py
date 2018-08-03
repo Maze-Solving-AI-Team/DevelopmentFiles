@@ -1,3 +1,28 @@
+'''
+=INTERSECTIONS=
+intersections solves a maze by marking intersections and paths traveled
+
+blue=intersection
+red=path the AI came into the intersection from
+green=path the AI has used already(hit dead end and came back to intersection)
+
+- \/ this is repeated until the end \/ -
+AI moves until it finds an intersection
+places blue on intersection and red on path traveled
+moves into white tile
+if intersection is blue(traveled), then AI checks for white
+if no white is present(all paths traveled), then AI travels back down red path until it hits previous intersection
+
+- \/ special cases \/ -
++if there are consecutive intersections(no space in between)
+    -AI cannot put red down(or it overwrites the blue of the other intersection)
+    -if all paths are traveled and no red is present, AI checks for blue(instead of red)
++(IN PROGRESS)if there is 1 space between intersections and they connect to each other on another path(loop)
+    -when AI goes around loop and goes onto first intersection,
+    -it sees that there are 2 red blocks(1 correct from entering, 1 wrong from 2nd intersection)
+    -then uses a log of coordinates of red to find oldest red around it and travel down the path
+'''
+
 # Import modules
 import sys, pygame, time, math
 from time import sleep
@@ -7,6 +32,7 @@ import timing
 from main import sleep
 from main import maze
 
+maze=('maze10.png')
 # Initialize
 img = Image.open(maze)
 change = 3
@@ -288,7 +314,7 @@ def down(replace):
 #returns boolean if current tile is intersection
 def isIntersection():
     global direction
-    paths = 0
+    paths = 0 
     #-print("isIntersection")
     if newscreen.get_at((currentX, currentY - blockSize)) == white or newscreen.get_at((currentX, currentY - blockSize)) == red or newscreen.get_at((currentX, currentY - blockSize)) == green or newscreen.get_at((currentX, currentY - blockSize)) == blue:
         paths = paths + 1
@@ -321,27 +347,32 @@ direction = 1
 
 def checkSurround(color):#returns direction or 0 if no color present on intersection paths
     global direction
+    paths=0
+    x=0
     if newscreen.get_at((currentX, currentY - blockSize)) == color:#up
         #direction = 4
         #-print("checkRed-red up-AI faces down")#debug
-        return 1
-    elif newscreen.get_at((currentX + blockSize, currentY)) == color:#right
+        paths+=1
+        x=1
+    if newscreen.get_at((currentX + blockSize, currentY)) == color:#right
         #direction = 3
         #-print("checkRed-red right-AI faces left")#debug
-        return 2
-    elif newscreen.get_at((currentX - blockSize, currentY)) == color:#left
+        paths+=1
+        x=2
+    if newscreen.get_at((currentX - blockSize, currentY)) == color:#left
         #direction = 2
         #-print("checkRed-red left-AI faces right")#debug
-        return 3
-    elif newscreen.get_at((currentX,currentY+blockSize))==color:#down
+        paths+=1
+        x=3
+    if newscreen.get_at((currentX,currentY+blockSize))==color:#down
         #direction = 1
         #-print("checkRed-red down-AI faces up")#debug
-        return 4
-    else:
-        #-print("checkRed-no red present")#debug
-        return 0
-
-    return False
+        paths+=1
+        x=4
+    if paths>1:
+        x=5
+    #-print("checkRed-no red present")#debug
+    return x
     #-print("direction-checkRed", direction)
 
 def addCount(isInt,directionMove,firstTime):
@@ -466,26 +497,100 @@ def addCount(isInt,directionMove,firstTime):
                 if direction==3:#AI comes from right
                     leftCount-=1
 
+
+intersectionX=[]
+intersectionY=[]
+intersectionNum=0
 # Check if all paths of an intersection have been travelled. If so, go back on red
 def intersection(isInt,firstTime):
-    global direction, upCount, rightCount, leftCount
+    global direction, upCount, rightCount, leftCount, intersectionX,intersectionY
+    
+    if firstTime:#if first time at intersection, then add x/y cordinates of red
+        if direction==1:#facing up
+            intersectionX.append(currentX)
+            intersectionY.append(currentY+blockSize)
+        elif direction==2:#facing right
+            intersectionX.append(currentX-blockSize)
+            intersectionY.append(currentY)
+        elif direction==3:#facing left
+            intersectionX.append(currentX+blockSize)
+            intersectionY.append(currentY)
+        elif direction==4:#facing down
+            intersectionX.append(currentX)
+            intersectionY.append(currentY-blockSize)
+    print("X-",intersectionX)
+    print(" y-",intersectionY)
+    #pygame.draw.rect(newscreen, (100,100,100), pygame.Rect(currentX-blockSize, currentY-blockSize, blockSize, blockSize))
+    print("intersectionNum",intersectionNum)
+    time.sleep(2)
+    
+    
     if newscreen.get_at((currentX, currentY - blockSize)) == white:#up
         addCount(isInt,1,firstTime)
         direction = 1
         moveUp(currentX, currentY, blockSize, blue)
+        print("int-move-up")
     elif newscreen.get_at((currentX + blockSize, currentY)) == white:#right
         addCount(isInt,2,firstTime)
         direction = 2
         moveRight(currentX, currentY, blockSize, blue)
+        print("int-move-right")
     elif newscreen.get_at((currentX - blockSize, currentY)) == white:#left
         addCount(isInt,3,firstTime)
         direction = 3
         moveLeft(currentX, currentY, blockSize, blue)
+        print("int-move-left")
     elif newscreen.get_at((currentX, currentY + blockSize)) == white:#down
         addCount(isInt,4,firstTime)
         direction = 4
         moveDown(currentX, currentY, blockSize, blue)
+        print("int-move-down")
     else:
+        if checkSurround(red)==5:#more than 1 red path
+            print("more than 1 red path")
+            for z in range(0,len(intersectionX)):
+                if intersectionX[z]==currentX-blockSize:#left
+                    if intersectionY[z]==currentY:
+                        addCount(isInt,3,firstTime)
+                        direction=3
+                        moveLeft(currentX,currentY,blockSize,blue)
+                        print("int-to red-left")
+                        break
+                elif intersectionX[z]==currentX+blockSize:#right
+                    if intersectionY[z]==currentY:
+                        addCount(isInt,2,firstTime)
+                        direction=2
+                        moveRight(currentX,currentY,blockSize,blue)
+                        print("int-to red-right")
+                        break
+                elif intersectionY[z]==currentY-blockSize:#up
+                    if intersectionX[z]==currentX:
+                        addCount(isInt,1,firstTime)
+                        direction=1
+                        moveUp(currentX,currentY,blockSize,blue)
+                        print("int-to red-up")
+                        break
+                elif intersectionY[z]==currentY+blockSize:#down
+                    if intersectionX[z]==currentX:
+                        addCount(isInt,4,firstTime)
+                        direction=4
+                        moveDown(currentX,currentY,blockSize,blue)
+                        print("int-to red-down")
+                        break
+            print("z-",z)
+        else:#1 red path
+            print("only 1 red path")
+        '''
+        print("intersection-length",len(intersectionX))
+        print("intersectionX",intersectionX[intersectionNum-1])
+        print("currentX",currentX)
+        if intersectionX[intersectionNum-1]>currentX:#left
+            addCount(isInt,3,firstTime)
+            direction=3
+            moveLeft(currentX,currentY,blockSize,blue)
+            print("GHASJFHFJWHAUJSHFWAHSDJNWAJSKFJWHANMSDKWASIJD")
+            '''
+        '''
         if checkSurround(red) == 0:#no red
             if newscreen.get_at((currentX, currentY - blockSize)) == blue:#up
                 addCount(isInt,1,firstTime)
@@ -519,6 +624,8 @@ def intersection(isInt,firstTime):
             addCount(isInt,4,firstTime)
             direction = 4
             moveDown(currentX, currentY, blockSize, blue)
+            '''
+        time.sleep(5)
 
 # ------------- OUR ALGORITHM -------------
 
@@ -537,6 +644,7 @@ while 0 != currentY:
                 if newscreen.get_at((currentX, currentY + blockSize)) != blue:#down
                     pygame.draw.rect(newscreen, red, pygame.Rect(currentX, currentY+blockSize, blockSize, blockSize))#set red path into intersection
                 pygame.draw.rect(newscreen, blue, pygame.Rect(currentX, currentY, blockSize, blockSize))#set current space to blue
+                intersectionNum+=1
                 intersection(isInt,True)
         else:
             if newscreen.get_at((currentX, currentY - blockSize)) == blue:
@@ -553,6 +661,7 @@ while 0 != currentY:
                 if newscreen.get_at((currentX-blockSize, currentY)) != blue:#left
                     pygame.draw.rect(newscreen, red, pygame.Rect(currentX-blockSize, currentY, blockSize, blockSize))#set red path into intersection
                 pygame.draw.rect(newscreen, blue, pygame.Rect(currentX, currentY, blockSize, blockSize))#set current space to blue
+                intersectionNum+=1
                 intersection(isInt,True)
         else:
             if newscreen.get_at((currentX + blockSize, currentY)) == blue:
@@ -569,7 +678,8 @@ while 0 != currentY:
                 if newscreen.get_at((currentX+blockSize, currentY)) != blue:#right
                     pygame.draw.rect(newscreen, red, pygame.Rect(currentX+blockSize, currentY, blockSize, blockSize))#set red path into intersection
                 pygame.draw.rect(newscreen, blue, pygame.Rect(currentX, currentY, blockSize, blockSize))#set current space to blue
-                intersection(isInt,True)                
+                intersectionNum+=1
+                intersection(isInt,True)
         else:
             if newscreen.get_at((currentX - blockSize, currentY)) == blue:
                 moveLeft(currentX, currentY, blockSize, white)
@@ -585,6 +695,7 @@ while 0 != currentY:
                 if newscreen.get_at((currentX, currentY - blockSize)) != blue:#up
                     pygame.draw.rect(newscreen, red, pygame.Rect(currentX, currentY-blockSize, blockSize, blockSize))#set red path into intersection
                 pygame.draw.rect(newscreen, blue, pygame.Rect(currentX, currentY, blockSize, blockSize))#set current space to blue
+                intersectionNum+=1
                 intersection(isInt,True)
         else:
             if newscreen.get_at((currentX, currentY + blockSize)) == blue:

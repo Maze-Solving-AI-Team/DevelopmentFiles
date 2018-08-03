@@ -5,7 +5,9 @@ from PIL import Image
 import timing
 from main import sleep
 from main import maze
-class Algs:
+
+
+class Algorithms(object):
     def __init__(self,direction,currentX,currentY):
         self.direction=direction
         self.currentX=currentX
@@ -18,7 +20,7 @@ class Algs:
         screen = pygame.display.set_mode((width,height))
         background = pygame.image.load(maze).convert()
         newscreen = pygame.transform.scale(background, (width, height))
-        
+
 #=====================================RIGHT TURN===============================================
     def rightTurn(self):
         #Colors
@@ -62,7 +64,7 @@ class Algs:
         time.sleep(0.1)
 
         # Function to move forward
-        def moveUp(x, y, blocksize, newcolor, sleep):
+        def moveUp(self, x, y, blocksize, newcolor, sleep):
             global direction
             pygame.draw.rect(newscreen, newcolor, pygame.Rect(x, y, blocksize, blocksize))
             pygame.draw.rect(newscreen, color, pygame.Rect(x, y - blocksize, blocksize, blocksize))
@@ -76,7 +78,7 @@ class Algs:
             time.sleep(sleep)
 
         # Function to move left
-        def moveDown(x, y, blocksize, newcolor, sleep):
+        def moveDown(self, x, y, blocksize, newcolor, sleep):
             global direction
             pygame.draw.rect(newscreen, newcolor, pygame.Rect(x, y, blocksize, blocksize))
             pygame.draw.rect(newscreen, color, pygame.Rect(x, y + blocksize, blocksize, blocksize))
@@ -90,7 +92,7 @@ class Algs:
             time.sleep(sleep)
             
         # Function to move left  
-        def moveLeft(x, y, blocksize, newcolor, sleep):
+        def moveLeft(self, x, y, blocksize, newcolor, sleep):
             global direction
             pygame.draw.rect(newscreen, newcolor, pygame.Rect(x, y, blocksize, blocksize))
             pygame.draw.rect(newscreen, color, pygame.Rect(x - blocksize, y, blocksize, blocksize))
@@ -104,7 +106,7 @@ class Algs:
             time.sleep(sleep)
 
         # Function to move right
-        def moveRight(x, y, blocksize, newcolor, sleep):
+        def moveRight(self, x, y, blocksize, newcolor, sleep):
             global direction
             pygame.draw.rect(newscreen, newcolor, pygame.Rect(x, y, blocksize, blocksize))
             pygame.draw.rect(newscreen, color, pygame.Rect(x + blocksize, y, blocksize, blocksize))
@@ -118,7 +120,7 @@ class Algs:
             time.sleep(sleep)
 
         #Initialization of currentX and currentY
-        def varsInit(x, y):
+        def varsInit (self, x, y):
             global currentX
             global currentY
             global direction
@@ -127,7 +129,7 @@ class Algs:
             direction = 1
 
         #Algorithm to determine direction to move if facing up
-        def up(replace):
+        def up(self, replace):
             global direction
             if newscreen.get_at((currentX + blockSize, currentY)) == white:#right
                 moveRight(currentX, currentY, blockSize, replace, sleep)
@@ -143,7 +145,7 @@ class Algs:
                 direction = 4
             
         #Algorithm to determine direction to move if facing right
-        def right(replace):
+        def right(self, replace):
             global direction
             if newscreen.get_at((currentX, currentY + blockSize)) == white:#down
                 moveDown(currentX, currentY, blockSize, replace, sleep)
@@ -159,7 +161,7 @@ class Algs:
                 direction = 3
             
         #Algorithm to determine direction to move if facing left
-        def left(replace):
+        def left(self, replace):
             global direction
             if newscreen.get_at((currentX, currentY - blockSize)) == white:#up        
                 moveUp(currentX, currentY, blockSize, replace, sleep)
@@ -175,7 +177,7 @@ class Algs:
                 direction = 2
 
         #Algorithm to determine direction to move if facing down
-        def down(replace):
+        def down(self, replace):
             global direction
             if newscreen.get_at((currentX - blockSize, currentY)) == white:#left
                 moveLeft(currentX, currentY, blockSize, replace, sleep)

@@ -5,18 +5,17 @@ from pygame.locals import *
 from PIL import *
 from PIL import Image
 import timing
-from main import sleep
-from main import maze
+from init import *
 
 # Initialize
 img = Image.open(maze)
 change = 3
 width = img.width * change
 height = img.height * change
-background = [img]
 screen = pygame.display.set_mode((width,height))
 background = pygame.image.load(maze).convert()
 newscreen = pygame.transform.scale(background, (width, height))
+
 #Colors
 color = (0, 188, 0)
 white = (255, 255, 255)
@@ -49,7 +48,6 @@ xvalueOfEnd = list[0] * change
 pygame.draw.rect(newscreen, color, pygame.Rect(xvalueOfStart, yvalueOfStart, blockSize, blockSize))
 screen.blit(newscreen, (0, 0))
 pygame.display.update()
-time.sleep(0.1)
 
 # Function to move forward
 # Function to move forward
@@ -100,25 +98,142 @@ def moveRight(x, y, blocksize, newcolor, sleep):
     currentY = y
     time.sleep(sleep)
 
-moveUp(xvalueOfStart, yvalueOfStart, blockSize, white, sleep)
+#Initialization of currentX and currentY
+def varsInit(x, y):
+    global currentX
+    global currentY
+    global direction
+    currentX = x
+    currentY = y
+    direction = 1
+
+#Algorithm to determine direction to move if facing up
+def up(replace):
+    global direction
+    if newscreen.get_at((currentX + blockSize, currentY)) == white:#right
+        moveRight(currentX, currentY, blockSize, replace, sleep)
+        direction = 2
+    elif newscreen.get_at((currentX, currentY - blockSize)) == white:#up        
+        moveUp(currentX, currentY, blockSize, replace, sleep)
+        direction = 1
+    elif newscreen.get_at((currentX - blockSize, currentY)) == white:#left
+        moveLeft(currentX, currentY, blockSize, replace, sleep)
+        direction = 3
+    elif newscreen.get_at((currentX, currentY + blockSize)) == white:#down
+        moveDown(currentX, currentY, blockSize, replace, sleep)
+        direction = 4
+    else:
+        if newscreen.get_at((currentX - blockSize, currentY)) == blue:#left
+            moveLeft(currentX, currentY, blockSize, (0,255,255), sleep)
+            direction = 3
+        elif newscreen.get_at((currentX, currentY + blockSize)) == blue:#down
+            moveDown(currentX, currentY, blockSize, (0,255,255), sleep)
+            direction = 4
+        elif newscreen.get_at((currentX + blockSize, currentY)) == blue:#right
+            moveRight(currentX, currentY, blockSize, (0,255,255), sleep)
+            direction = 2
+        elif newscreen.get_at((currentX, currentY - blockSize)) == blue:#up        
+            moveUp(currentX, currentY, blockSize, (0,255,255), sleep)
+            direction = 1
+    
+#Algorithm to determine direction to move if facing right
+def right(replace):
+    global direction
+    if newscreen.get_at((currentX, currentY + blockSize)) == white:#down
+        moveDown(currentX, currentY, blockSize, replace, sleep)
+        direction = 4
+    elif newscreen.get_at((currentX + blockSize, currentY)) == white:#right
+        moveRight(currentX, currentY, blockSize, replace, sleep)
+        direction = 2
+    elif newscreen.get_at((currentX, currentY - blockSize)) == white:#up        
+        moveUp(currentX, currentY, blockSize, replace, sleep)
+        direction = 1
+    elif newscreen.get_at((currentX - blockSize, currentY)) == white:#left
+        moveLeft(currentX, currentY, blockSize, replace, sleep)
+        direction = 3
+    else:
+        if newscreen.get_at((currentX, currentY - blockSize)) == blue:#up        
+            moveUp(currentX, currentY, blockSize, (0,255,255), sleep)
+            direction = 1
+        elif newscreen.get_at((currentX - blockSize, currentY)) == blue:#left
+            moveLeft(currentX, currentY, blockSize, (0,255,255), sleep)
+            direction = 3
+        elif newscreen.get_at((currentX, currentY + blockSize)) == blue:#down
+            moveDown(currentX, currentY, blockSize, (0,255,255), sleep)
+            direction = 4
+        elif newscreen.get_at((currentX + blockSize, currentY)) == blue:#right
+            moveRight(currentX, currentY, blockSize, (0,255,255), sleep)
+            direction = 2
+
+#Algorithm to determine direction to move if facing left
+def left(replace):
+    global direction
+    if newscreen.get_at((currentX, currentY - blockSize)) == white:#up        
+        moveUp(currentX, currentY, blockSize, replace, sleep)
+        direction = 1
+    elif newscreen.get_at((currentX - blockSize, currentY)) == white:#left
+        moveLeft(currentX, currentY, blockSize, replace, sleep)
+        direction = 3
+    elif newscreen.get_at((currentX, currentY + blockSize)) == white:#down
+        moveDown(currentX, currentY, blockSize, replace, sleep)
+        direction = 4
+    elif newscreen.get_at((currentX + blockSize, currentY)) == white:#right
+        moveRight(currentX, currentY, blockSize, replace, sleep)
+        direction = 2
+    else:
+        if newscreen.get_at((currentX, currentY + blockSize)) == blue:#down
+            moveDown(currentX, currentY, blockSize, (0,255,255), sleep)
+            direction = 4
+        elif newscreen.get_at((currentX + blockSize, currentY)) == blue:#right
+            moveRight(currentX, currentY, blockSize, (0,255,255), sleep)
+            direction = 2
+        elif newscreen.get_at((currentX, currentY - blockSize)) == blue:#up        
+            moveUp(currentX, currentY, blockSize, (0,255,255), sleep)
+            direction = 1
+        elif newscreen.get_at((currentX - blockSize, currentY)) == blue:#left
+            moveLeft(currentX, currentY, blockSize, (0,255,255), sleep)
+            direction = 3
+
+#Algorithm to determine direction to move if facing down
+def down(replace):
+    global direction
+    if newscreen.get_at((currentX - blockSize, currentY)) == white:#left
+        moveLeft(currentX, currentY, blockSize, replace, sleep)
+        direction = 3
+    elif newscreen.get_at((currentX, currentY + blockSize)) == white:#down
+        moveDown(currentX, currentY, blockSize, replace, sleep)
+        direction = 4
+    elif newscreen.get_at((currentX + blockSize, currentY)) == white:#right
+        moveRight(currentX, currentY, blockSize, replace, sleep)
+        direction = 2
+    elif newscreen.get_at((currentX, currentY - blockSize)) == white:#up        
+        moveUp(currentX, currentY, blockSize, replace, sleep)
+        direction = 1
+    else:
+        if newscreen.get_at((currentX + blockSize, currentY)) == blue:#right
+            moveRight(currentX, currentY, blockSize, (0,255,255), sleep)
+            direction = 2
+        elif newscreen.get_at((currentX, currentY - blockSize)) == blue:#up        
+            moveUp(currentX, currentY, blockSize, (0,255,255), sleep)
+            direction = 1
+        elif newscreen.get_at((currentX - blockSize, currentY)) == blue:#left
+            moveLeft(currentX, currentY, blockSize, (0,255,255), sleep)
+            direction = 3
+        elif newscreen.get_at((currentX, currentY + blockSize)) == blue:#down
+            moveDown(currentX, currentY, blockSize, (0,255,255), sleep)
+            direction = 4
+
+varsInit(xvalueOfStart, yvalueOfStart)
+
+moveUp(currentX, currentY, blockSize, blue, sleep)
 
 while 0 != currentY:
     pygame.event.get()
-    if newscreen.get_at((currentX,currentY - blockSize)) == (255, 255, 255, 255):#up        
-        moveUp(currentX, currentY, blockSize, blue, sleep)
-    elif newscreen.get_at((currentX + blockSize,currentY)) == (255, 255, 255, 255):#right
-        moveRight(currentX, currentY, blockSize, blue, sleep)
-    elif newscreen.get_at((currentX - blockSize,currentY)) == (255, 255, 255, 255):#left
-        moveLeft(currentX, currentY, blockSize, blue, sleep)
-    elif newscreen.get_at((currentX,currentY + blockSize)) == (255, 255, 255, 255):#down
-        moveDown(currentX, currentY, blockSize, blue, sleep)
-    else:
-        if newscreen.get_at((currentX,currentY + blockSize)) == (0, 0, 255, 255):#down
-            moveDown(currentX, currentY, blockSize, (0, 255, 255), sleep)
-        elif newscreen.get_at((currentX + blockSize,currentY)) == (0, 0, 255, 255):#right
-            moveRight(currentX, currentY, blockSize, (0, 255, 255), sleep)
-        else:
-            if newscreen.get_at((currentX - blockSize,currentY)) == (0, 0, 255, 255):#left
-                moveLeft(currentX, currentY, blockSize, (0, 255, 255), sleep)
-            elif newscreen.get_at((currentX,currentY - blockSize)) == (0, 0, 255, 255):#up        
-                moveUp(currentX, currentY, blockSize, (0, 255, 255), sleep)
+    if direction == 1:#up
+        up(blue)
+    elif direction == 2:
+        right(blue)
+    elif direction == 3:
+        left(blue)
+    elif direction == 4:
+        down(blue)

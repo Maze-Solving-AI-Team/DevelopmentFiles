@@ -21,7 +21,7 @@ newscreen = pygame.transform.scale(background, (width, height))
 color = (0, 188, 0)
 white = (255, 255, 255, 255)
 black = (0, 0, 0, 255)
-blue = (0, 0, 255, 255)
+blue = (0, 255, 255, 255)
 red = (255, 0, 0)
 green = (0, 255, 0, 255)
 
@@ -222,6 +222,7 @@ moveUp(currentX, currentY, blockSize, white, sleep)
 
 #Right turn movement through the solution
 while 0 != currentY:
+    pygame.event.get()
     if direction == 1:#up
         up(white)
     elif direction == 2:
