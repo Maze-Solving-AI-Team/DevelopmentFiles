@@ -1,7 +1,10 @@
 '''
-skip-line
-deadEnd-line
-intersection-line
+solution-line 1762
+
+priorities-line 262
+rightTurn-line 528
+deadEnd-line 702
+intersection-line 963
 '''
 
 # Import modules
@@ -9,7 +12,7 @@ import sys, pygame, time, math
 from time import sleep
 from PIL import Image
 from datetime import datetime
-# from algs import Algorithms
+# from algs import Algorithms1
 
 '''
 deadEnd=Algs()
@@ -303,7 +306,6 @@ screen.blit(newscreen, (0, 0))
 pygame.display.update()
 
 # Function to move forward
-# Function to move forward
 def moveUp(x, y, blocksize, newcolor, sleep):
     pygame.draw.rect(newscreen, newcolor, pygame.Rect(x, y, blocksize, blocksize))
     pygame.draw.rect(newscreen, color, pygame.Rect(x, y - blocksize, blocksize, blocksize))
@@ -315,7 +317,7 @@ def moveUp(x, y, blocksize, newcolor, sleep):
     currentX = x
     time.sleep(sleep)
 
-# Function to move left
+# Function to move down
 def moveDown(x, y, blocksize, newcolor, sleep):
     pygame.draw.rect(newscreen, newcolor, pygame.Rect(x, y, blocksize, blocksize))
     pygame.draw.rect(newscreen, color, pygame.Rect(x, y + blocksize, blocksize, blocksize))
@@ -707,11 +709,11 @@ height = img.height * change
 screen = pygame.display.set_mode((width,height))
 background = pygame.image.load(maze).convert()
 newscreen = pygame.transform.scale(background, (width, height))
-'''
+
 skip = pygame.image.load('skip.png')
 newscreen.blit(skip,(0,0))
 pygame.display.update()
-'''
+
 #Colors
 color = (0, 188, 0)
 white = (255, 255, 255, 255)
