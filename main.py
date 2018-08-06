@@ -707,11 +707,11 @@ height = img.height * change
 screen = pygame.display.set_mode((width,height))
 background = pygame.image.load(maze).convert()
 newscreen = pygame.transform.scale(background, (width, height))
-
+'''
 skip = pygame.image.load('skip.png')
 newscreen.blit(skip,(0,0))
 pygame.display.update()
-
+'''
 #Colors
 color = (0, 188, 0)
 white = (255, 255, 255, 255)
